@@ -55,12 +55,16 @@ void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector posit
 	positionBrick.Z = distace_spawn_z * count_z;
 
 	FActorSpawnParameters SpawnParams;
-	GetWorld()->SpawnActor<AActor>(
+	AActor* newbrick = GetWorld()->SpawnActor<AActor>(
 		brick,
 		GetActorLocation() + positionBrick,
 		GetActorRotation(),
 		SpawnParams
 		);
+	
+	FAttachmentTransformRules rules(EAttachmentRule::KeepWorld, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, false);
+	newbrick->AttachToActor(this, rules);
+
 	
 }
 
