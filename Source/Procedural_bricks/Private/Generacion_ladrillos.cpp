@@ -20,6 +20,8 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	distace_spawn_z = 200;
 
 	lineal_can_instantiate_bricks = true;
+	vertical_can_instantiate_bricks = false;
+	horizontal_can_instantiate_bricks = false;
 
 }
 
@@ -32,9 +34,8 @@ void AGeneracion_ladrillos::BeginPlay()
 
 	if (lineal_can_instantiate_bricks || vertical_can_instantiate_bricks)
 	{
-		FVector initi_brick_position = FVector::ZeroVector;
-		spawn_brick(brick_reference, initi_brick_position);//spawn new brick first
-	
+		//FVector initi_brick_position = FVector::ZeroVector;
+		//spawn_brick(brick_reference, initi_brick_position);//spawn new brick first
 		GetWorld()->GetTimerManager().SetTimer(timer_spawn_handler, this, &AGeneracion_ladrillos::SpawnTimer_out, timeToSpawn, true);
 	}
 	
@@ -45,20 +46,35 @@ void AGeneracion_ladrillos::BeginPlay()
 
 void AGeneracion_ladrillos::SpawnTimer_out()
 {
-	bool can_instance_brick = check_brick_amoutn_end();
-	if (can_instance_brick)
+	
+	if (lineal_can_instantiate_bricks)//if instance lineal
 	{
-		if (lineal_can_instantiate_bricks)//if instance lineal
+		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
+		bool can_instance_brick = linear_new_position_to_end(reference_lineal_brick_position);
+		if (can_instance_brick)
 		{
-			FVector new_linealbrick_position = lineal_check_position();
-			spawn_brick(brick_reference, new_linealbrick_position);//spawn new brick
-		}
-		if (vertical_can_instantiate_bricks)//if instance vertical
-		{
-			FVector new_vertical_brick_position = vertical_check_position();
-			spawn_brick(brick_reference, new_vertical_brick_position);//spawn new brick
+			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
 		}
 	}
+	if (vertical_can_instantiate_bricks)//if instance vertical
+	{
+		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
+		bool can_instance_brick = vertical_new_position_to_end(reference_lineal_brick_position);
+		if (can_instance_brick)
+		{
+			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
+		}
+	}
+	if (horizontal_can_instantiate_bricks)//if instance vertical
+	{
+		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
+		bool can_instance_brick = vertical_new_position_to_end(reference_lineal_brick_position);
+		if (can_instance_brick)
+		{
+			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
+		}
+	}
+	
 }
 
 
@@ -87,16 +103,24 @@ void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector posit
 }
 
 
-bool AGeneracion_ladrillos::check_brick_amoutn_end()
+bool AGeneracion_ladrillos::linear_new_position_to_end(FVector &brick_position)
 {
 	//if (GEngine)
 	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
+	brick_position = FVector::ZeroVector;
+	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+	brick_position.Y = 0;
+	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	
+	check_X_counter = count_x;
+	check_Z_counter = count_z;
 
-	if (count_x > amount_x)//if there are more in X than quantity X
+	if (count_x >= amount_x - 1)//if there are more in X than quantity X
 	{
 		count_x = 0;
 		count_z += 1;
-		if (count_z > amount_z)//if there are more in Y than quantity Y
+
+		if (count_z > amount_z - 1)//if there are more in Y than quantity Y
 		{
 			GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
 			return false;
@@ -106,27 +130,73 @@ bool AGeneracion_ladrillos::check_brick_amoutn_end()
 	{
 		count_x += 1;
 	}
+
+
 	return true;
 }
 
-//distance spawn lineal
-FVector AGeneracion_ladrillos::lineal_check_position()
+bool AGeneracion_ladrillos::vertical_new_position_to_end(FVector& brick_position)
 {
-	FVector brick_position = FVector::ZeroVector;
+	//if (GEngine)
+//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
+	brick_position = FVector::ZeroVector;
 	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
 	brick_position.Y = 0;
 	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
-	return brick_position;
+
+	check_X_counter = count_x;
+	check_Z_counter = count_z;
+
+	if (count_z >= amount_z - 1)//if there are more in X than quantity X
+	{
+		count_z = 0;
+		count_x += 1;
+
+		if (count_x > amount_x - 1)//if there are more in Y than quantity Y
+		{
+			GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+			return false;
+		}
+	}
+	else
+	{
+		count_z += 1;
+	}
+
+
+	return true;
 }
 
-//distance spawn vertical
-FVector AGeneracion_ladrillos::vertical_check_position()
+bool AGeneracion_ladrillos::horizotal_new_position_to_end(FVector& brick_position)
 {
-	FVector brick_position = FVector::ZeroVector;
+	//if (GEngine)
+//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
+	brick_position = FVector::ZeroVector;
 	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
 	brick_position.Y = 0;
 	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
-	return brick_position;
+
+	check_X_counter = count_x;
+	check_Z_counter = count_z;
+
+	if (count_z >= amount_z - 1)//if there are more in X than quantity X
+	{
+		count_z = 0;
+		count_x += 1;
+
+		if (count_x > amount_x - 1)//if there are more in Y than quantity Y
+		{
+			GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+			return false;
+		}
+	}
+	else
+	{
+		count_z += 1;
+	}
+
+
+	return true;
 }
 
 
