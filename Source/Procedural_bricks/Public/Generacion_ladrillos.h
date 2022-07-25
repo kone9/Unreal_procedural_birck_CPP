@@ -29,6 +29,11 @@ protected:
 	UFUNCTION()
 	void SpawnTimer_out();
 
+	//determines the type of instance according to the selected condition
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool lineal_can_instantiate_bricks;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool vertical_can_instantiate_bricks;
 
 	//birck
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,13 +51,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> brick_reference;
 	
-	UPROPERTY(BlueprintReadWrite)
-	FVector brick_position;
-
+	
 private:
 	void spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick);
-
 	bool check_brick_amoutn_end();
+
+	//instance checks position
+	FVector lineal_check_position();
+	FVector vertical_check_position();
 
 	//counter reference actual position
 	int count_x;

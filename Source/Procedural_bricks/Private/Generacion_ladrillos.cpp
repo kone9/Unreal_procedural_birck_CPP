@@ -13,12 +13,14 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 
 	amount_x = 10;
 	amount_z = 10;
-	brick_position = FVector::ZeroVector;
 	count_x = 0;
 	count_z = 0;
 
 	distace_spawn_x = 300;
 	distace_spawn_z = 200;
+
+	lineal_can_instantiate_bricks = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -27,46 +29,63 @@ void AGeneracion_ladrillos::BeginPlay()
 	Super::BeginPlay();
 
 	if (GetWorld() == nullptr) return;
-	GetWorld()->GetTimerManager().SetTimer(timer_spawn_handler, this, &AGeneracion_ladrillos::SpawnTimer_out, timeToSpawn, true);
+
+	if (lineal_can_instantiate_bricks || vertical_can_instantiate_bricks)
+	{
+		FVector initi_brick_position = FVector::ZeroVector;
+		spawn_brick(brick_reference, initi_brick_position);//spawn new brick first
 	
-	spawn_brick(brick_reference, brick_position);//spawn new brick first
+		GetWorld()->GetTimerManager().SetTimer(timer_spawn_handler, this, &AGeneracion_ladrillos::SpawnTimer_out, timeToSpawn, true);
+	}
+	
 	
 }
+
+
 
 void AGeneracion_ladrillos::SpawnTimer_out()
 {
 	bool can_instance_brick = check_brick_amoutn_end();
 	if (can_instance_brick)
 	{
-		spawn_brick(brick_reference, brick_position);//spawn new brick
+		if (lineal_can_instantiate_bricks)//if instance lineal
+		{
+			FVector new_linealbrick_position = lineal_check_position();
+			spawn_brick(brick_reference, new_linealbrick_position);//spawn new brick
+		}
+		if (vertical_can_instantiate_bricks)//if instance vertical
+		{
+			FVector new_vertical_brick_position = vertical_check_position();
+			spawn_brick(brick_reference, new_vertical_brick_position);//spawn new brick
+		}
 	}
 }
-
-
-
 
 
 void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick)
 {
 	if (GetWorld() == nullptr) return;
-	
-	//distance spawn
-	positionBrick.X = distace_spawn_x * count_x;
-	positionBrick.Z = distace_spawn_z * count_z;
-
 	FActorSpawnParameters SpawnParams;
+	
 	AActor* newbrick = GetWorld()->SpawnActor<AActor>(
 		brick,
-		GetActorLocation() + positionBrick,
-		GetActorRotation(),
+		positionBrick,
+		FRotator::ZeroRotator,
 		SpawnParams
 		);
 	
-	FAttachmentTransformRules rules(EAttachmentRule::KeepWorld, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, false);
+	FAttachmentTransformRules rules(
+			EAttachmentRule::KeepRelative,
+			EAttachmentRule::KeepRelative,
+			EAttachmentRule::KeepRelative,
+			false
+		);
+
 	newbrick->AttachToActor(this, rules);
 
 	
 }
+
 
 bool AGeneracion_ladrillos::check_brick_amoutn_end()
 {
@@ -88,6 +107,26 @@ bool AGeneracion_ladrillos::check_brick_amoutn_end()
 		count_x += 1;
 	}
 	return true;
+}
+
+//distance spawn lineal
+FVector AGeneracion_ladrillos::lineal_check_position()
+{
+	FVector brick_position = FVector::ZeroVector;
+	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+	brick_position.Y = 0;
+	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	return brick_position;
+}
+
+//distance spawn vertical
+FVector AGeneracion_ladrillos::vertical_check_position()
+{
+	FVector brick_position = FVector::ZeroVector;
+	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+	brick_position.Y = 0;
+	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	return brick_position;
 }
 
 
