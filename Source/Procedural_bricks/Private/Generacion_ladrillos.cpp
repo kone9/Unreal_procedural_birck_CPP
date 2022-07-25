@@ -32,7 +32,7 @@ void AGeneracion_ladrillos::BeginPlay()
 
 	if (GetWorld() == nullptr) return;
 
-	if (lineal_can_instantiate_bricks || vertical_can_instantiate_bricks)
+	if (lineal_can_instantiate_bricks || vertical_can_instantiate_bricks || horizontal_can_instantiate_bricks)
 	{
 		//FVector initi_brick_position = FVector::ZeroVector;
 		//spawn_brick(brick_reference, initi_brick_position);//spawn new brick first
@@ -68,7 +68,7 @@ void AGeneracion_ladrillos::SpawnTimer_out()
 	if (horizontal_can_instantiate_bricks)//if instance vertical
 	{
 		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
-		bool can_instance_brick = vertical_new_position_to_end(reference_lineal_brick_position);
+		bool can_instance_brick = horizotal_new_position_to_end(reference_lineal_brick_position);
 		if (can_instance_brick)
 		{
 			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
@@ -176,25 +176,17 @@ bool AGeneracion_ladrillos::horizotal_new_position_to_end(FVector& brick_positio
 	brick_position.Y = 0;
 	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
 
+	if (count_z > amount_z - 1 && count_x > amount_x - 1)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+		return false;
+	}
+
 	check_X_counter = count_x;
 	check_Z_counter = count_z;
 
-	if (count_z >= amount_z - 1)//if there are more in X than quantity X
-	{
-		count_z = 0;
-		count_x += 1;
-
-		if (count_x > amount_x - 1)//if there are more in Y than quantity Y
-		{
-			GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
-			return false;
-		}
-	}
-	else
-	{
-		count_z += 1;
-	}
-
+	count_z += 1;
+	count_x += 1;
 
 	return true;
 }
