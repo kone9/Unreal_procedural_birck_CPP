@@ -19,9 +19,9 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	distace_spawn_x = 300;
 	distace_spawn_z = 200;
 
-	lineal_can_instantiate_bricks = true;
+	horizontal_can_instantiate_bricks = true;
 	vertical_can_instantiate_bricks = false;
-	horizontal_can_instantiate_bricks = false;
+	diagonal_can_instantiate_bricks = false;
 
 }
 
@@ -32,25 +32,22 @@ void AGeneracion_ladrillos::BeginPlay()
 
 	if (GetWorld() == nullptr) return;
 
-	if (lineal_can_instantiate_bricks || vertical_can_instantiate_bricks || horizontal_can_instantiate_bricks)
+	if (horizontal_can_instantiate_bricks || vertical_can_instantiate_bricks || diagonal_can_instantiate_bricks)
 	{
 		//FVector initi_brick_position = FVector::ZeroVector;
 		//spawn_brick(brick_reference, initi_brick_position);//spawn new brick first
 		GetWorld()->GetTimerManager().SetTimer(timer_spawn_handler, this, &AGeneracion_ladrillos::SpawnTimer_out, timeToSpawn, true);
 	}
-	
-	
 }
-
 
 
 void AGeneracion_ladrillos::SpawnTimer_out()
 {
 	
-	if (lineal_can_instantiate_bricks)//if instance lineal
+	if (horizontal_can_instantiate_bricks)//if instance lineal
 	{
 		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
-		bool can_instance_brick = linear_new_position_to_end(reference_lineal_brick_position);
+		bool can_instance_brick = horizontal_new_position_to_end(reference_lineal_brick_position);
 		if (can_instance_brick)
 		{
 			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
@@ -58,20 +55,20 @@ void AGeneracion_ladrillos::SpawnTimer_out()
 	}
 	if (vertical_can_instantiate_bricks)//if instance vertical
 	{
-		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
-		bool can_instance_brick = vertical_new_position_to_end(reference_lineal_brick_position);
+		FVector reference_vertical_brick_position = FVector::ZeroVector;//reference variable
+		bool can_instance_brick = vertical_new_position_to_end(reference_vertical_brick_position);
 		if (can_instance_brick)
 		{
-			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
+			spawn_brick(brick_reference, reference_vertical_brick_position);//spawn new brick
 		}
 	}
-	if (horizontal_can_instantiate_bricks)//if instance vertical
+	if (diagonal_can_instantiate_bricks)//if instance vertical
 	{
-		FVector reference_lineal_brick_position = FVector::ZeroVector;//reference variable
-		bool can_instance_brick = horizotal_new_position_to_end(reference_lineal_brick_position);
+		FVector reference_diagonal_brick_position = FVector::ZeroVector;//reference variable
+		bool can_instance_brick = diagonal_new_position_to_end(reference_diagonal_brick_position);
 		if (can_instance_brick)
 		{
-			spawn_brick(brick_reference, reference_lineal_brick_position);//spawn new brick
+			spawn_brick(brick_reference, reference_diagonal_brick_position);//spawn new brick
 		}
 	}
 	
@@ -103,7 +100,7 @@ void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector posit
 }
 
 
-bool AGeneracion_ladrillos::linear_new_position_to_end(FVector &brick_position)
+bool AGeneracion_ladrillos::horizontal_new_position_to_end(FVector &brick_position)
 {
 	//if (GEngine)
 	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
@@ -167,10 +164,11 @@ bool AGeneracion_ladrillos::vertical_new_position_to_end(FVector& brick_position
 	return true;
 }
 
-bool AGeneracion_ladrillos::horizotal_new_position_to_end(FVector& brick_position)
+bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position)
 {
 	//if (GEngine)
 //	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
+
 	brick_position = FVector::ZeroVector;
 	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
 	brick_position.Y = 0;
@@ -184,10 +182,16 @@ bool AGeneracion_ladrillos::horizotal_new_position_to_end(FVector& brick_positio
 
 	check_X_counter = count_x;
 	check_Z_counter = count_z;
-
-	count_z += 1;
-	count_x += 1;
-
+	
+	if (count_x >= count_z)
+	{
+		count_x = count_z;
+		count_z += 1;
+	}
+	else
+	{
+		count_x += 1;
+	}
 	return true;
 }
 
@@ -196,5 +200,6 @@ bool AGeneracion_ladrillos::horizotal_new_position_to_end(FVector& brick_positio
 void AGeneracion_ladrillos::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 

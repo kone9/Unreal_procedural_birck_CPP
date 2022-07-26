@@ -31,11 +31,11 @@ protected:
 
 	//determines the type of instance according to the selected condition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool lineal_can_instantiate_bricks;
+	bool horizontal_can_instantiate_bricks;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool vertical_can_instantiate_bricks;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool horizontal_can_instantiate_bricks;
+	bool diagonal_can_instantiate_bricks;
 
 	//birck
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -64,14 +64,16 @@ private:
 	void spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick);
 	
 	//instance checks positions
-	bool linear_new_position_to_end(FVector& brick_position);
+	bool horizontal_new_position_to_end(FVector& brick_position);
 	bool vertical_new_position_to_end(FVector& brick_position);
-	bool horizotal_new_position_to_end(FVector& brick_position);
+	bool diagonal_new_position_to_end(FVector& brick_position);
 
 	//counter reference actual position
 	int count_x;
 	int count_z;
 
+	int count_x_anterior;
+	int count_y_anterior;
 
 
 public:	
