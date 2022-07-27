@@ -72,8 +72,7 @@ private:
 	int count_x;
 	int count_z;
 
-	int count_x_anterior;
-	int count_y_anterior;
+	int offset_x;;
 
 
 public:	

@@ -22,6 +22,8 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	horizontal_can_instantiate_bricks = true;
 	vertical_can_instantiate_bricks = false;
 	diagonal_can_instantiate_bricks = false;
+	
+	offset_x = 0;
 
 }
 
@@ -39,7 +41,6 @@ void AGeneracion_ladrillos::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(timer_spawn_handler, this, &AGeneracion_ladrillos::SpawnTimer_out, timeToSpawn, true);
 	}
 }
-
 
 void AGeneracion_ladrillos::SpawnTimer_out()
 {
@@ -74,7 +75,6 @@ void AGeneracion_ladrillos::SpawnTimer_out()
 	
 }
 
-
 void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick)
 {
 	if (GetWorld() == nullptr) return;
@@ -98,7 +98,6 @@ void AGeneracion_ladrillos::spawn_brick(TSubclassOf<AActor> brick, FVector posit
 
 	
 }
-
 
 bool AGeneracion_ladrillos::horizontal_new_position_to_end(FVector &brick_position)
 {
@@ -169,12 +168,7 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	//if (GEngine)
 //	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
 
-	brick_position = FVector::ZeroVector;
-	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
-	brick_position.Y = 0;
-	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
-
-	if (count_z > amount_z - 1 && count_x > amount_x - 1)
+	if (count_z > amount_z)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
 		return false;
@@ -183,21 +177,29 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	check_X_counter = count_x;
 	check_Z_counter = count_z;
 	
-	if (count_z >= count_x)
+
+	if (offset_x < count_z)//if there are more in X than quantity X
 	{
-		if (count_x < amount_x)
-		{
-			count_x += 1;
-		}
-		else
-		{
-			count_x = 0;
-		}
+		//count_x += 1;
+		offset_x += 1;
+		//count_x = offset_x;
+
+		brick_position = FVector::ZeroVector;
+		brick_position.X = GetActorLocation().X + (distace_spawn_x * offset_x);
+		brick_position.Y = 0;
+		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
 	}
 	else
 	{
-		count_x += 1;
+		count_z += 1;
+		offset_x = 0;
+
+		brick_position = FVector::ZeroVector;
+		brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+		brick_position.Y = 0;
+		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
 	}
+	
 	return true;
 }
 
