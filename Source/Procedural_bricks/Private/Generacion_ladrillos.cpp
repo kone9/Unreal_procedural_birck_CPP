@@ -183,10 +183,16 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	check_X_counter = count_x;
 	check_Z_counter = count_z;
 	
-	if (count_x >= count_z)
+	if (count_z >= count_x)
 	{
-		count_x = count_z;
-		count_z += 1;
+		if (count_x < amount_x)
+		{
+			count_x += 1;
+		}
+		else
+		{
+			count_x = 0;
+		}
 	}
 	else
 	{
