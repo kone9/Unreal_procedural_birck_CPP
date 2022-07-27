@@ -25,6 +25,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float timeToSpawn;
+	float actualTime;
 	
 	UFUNCTION()
 	void SpawnTimer_out();
@@ -72,7 +73,7 @@ private:
 	int count_x;
 	int count_z;
 
-	int count_x_anterior;
+	int offset_x;
 	int count_y_anterior;
 
 

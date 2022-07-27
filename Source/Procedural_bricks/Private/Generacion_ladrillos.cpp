@@ -9,7 +9,8 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	timeToSpawn = 1.0f;
+	timeToSpawn = 1000.0f; //in milisecons
+	actualTime = 0;
 
 	amount_x = 10;
 	amount_z = 10;
@@ -180,18 +181,25 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 		return false;
 	}
 
-	check_X_counter = count_x;
-	check_Z_counter = count_z;
-	
-	if (count_x >= count_z)
+
+	if (count_z > count_x)
 	{
-		count_x = count_z;
+		if (count_x > amount_z)
+		{
+			count_x = 0;
+			offset_x = 0;
+		}
+		else
+		{
+			count_x += 1;
+		}
+	}
+	if(offset_x == 0)
+	{
 		count_z += 1;
+		offset_x = count_z;
 	}
-	else
-	{
-		count_x += 1;
-	}
+
 	return true;
 }
 
@@ -201,5 +209,6 @@ void AGeneracion_ladrillos::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
+	
+}	
 
