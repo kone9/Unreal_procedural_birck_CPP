@@ -9,7 +9,7 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	timeToSpawn = 1.0f;
+	timeToSpawn = 1.0f;//milisecons
 
 	amount_x = 10;
 	amount_z = 10;
@@ -24,7 +24,7 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	diagonal_can_instantiate_bricks = false;
 	
 	offset_x = 0;
-
+	can_spawn = false;
 }
 
 // Called when the game starts or when spawned
@@ -163,6 +163,7 @@ bool AGeneracion_ladrillos::vertical_new_position_to_end(FVector& brick_position
 	return true;
 }
 
+
 bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position)
 {
 	//if (GEngine)
@@ -176,38 +177,86 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 
 	check_X_counter = count_x;
 	check_Z_counter = count_z;
+
+
+	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+	brick_position.Y = 0;
+	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
 	
+	count_x += 1;
+	count_z += 1;
 
-	if (offset_x < count_z)//if there are more in X than quantity X
-	{
-		//count_x += 1;
-		offset_x += 1;
-		//count_x = offset_x;
 
-		brick_position = FVector::ZeroVector;
-		brick_position.X = GetActorLocation().X + (distace_spawn_x * offset_x);
-		brick_position.Y = 0;
-		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
-	}
-	else
-	{
-		count_z += 1;
-		offset_x = 0;
+	//if (offset_x < count_z)//if there are more in X than quantity X
+	//{
+	//	//count_x += 1;
+	//	offset_x += 1;
+	//	//count_x = offset_x;
 
-		brick_position = FVector::ZeroVector;
-		brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
-		brick_position.Y = 0;
-		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
-	}
-	
+	//	brick_position = FVector::ZeroVector;
+	//	brick_position.X = GetActorLocation().X + (distace_spawn_x * offset_x);
+	//	brick_position.Y = 0;
+	//	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	//}
+	//else
+	//{
+	//	count_z += 1;
+	//	offset_x = 0;
+
+	//	brick_position = FVector::ZeroVector;
+	//	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+	//	brick_position.Y = 0;
+	//	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	//}
+
 	return true;
 }
+
+
+//bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position)
+//{
+//	//if (GEngine)
+////	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
+//
+//	if (count_z > amount_z)
+//	{
+//		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+//		return false;
+//	}
+//
+//	check_X_counter = count_x;
+//	check_Z_counter = count_z;
+//	
+//
+//	if (offset_x < count_z)//if there are more in X than quantity X
+//	{
+//		//count_x += 1;
+//		offset_x += 1;
+//		//count_x = offset_x;
+//
+//		brick_position = FVector::ZeroVector;
+//		brick_position.X = GetActorLocation().X + (distace_spawn_x * offset_x);
+//		brick_position.Y = 0;
+//		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+//	}
+//	else
+//	{
+//		count_z += 1;
+//		offset_x = 0;
+//
+//		brick_position = FVector::ZeroVector;
+//		brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
+//		brick_position.Y = 0;
+//		brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+//	}
+//	
+//	return true;
+//}
 
 
 // Called every frame
 void AGeneracion_ladrillos::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
 
 }
 

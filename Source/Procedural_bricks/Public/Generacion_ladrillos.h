@@ -74,6 +74,8 @@ private:
 
 	int offset_x;;
 
+	bool can_spawn;
+
 
 public:	
 	// Called every frame
