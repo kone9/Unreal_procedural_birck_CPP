@@ -59,6 +59,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int check_Z_counter;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int check_offset_X;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int check_offset_Z;
 
 private:
 	void spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick);
@@ -72,8 +76,9 @@ private:
 	int count_x;
 	int count_z;
 
-	int offset_x;;
 
+	int offset_x;
+	int offset_z;
 	bool can_spawn;
 
 

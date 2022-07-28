@@ -24,7 +24,11 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	diagonal_can_instantiate_bricks = false;
 	
 	offset_x = 0;
+	offset_z = 0;
 	can_spawn = false;
+	check_offset_X = 0;
+	check_offset_Z = 0;
+
 }
 
 // Called when the game starts or when spawned
@@ -169,22 +173,62 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	//if (GEngine)
 //	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
 
-	if (count_z > amount_z)
+	if (offset_x == amount_x -1 && offset_z == amount_z -1)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
 		return false;
 	}
 
-	check_X_counter = count_x;
-	check_Z_counter = count_z;
-
-
+	//tener en cuenta que esto representa el resultado anterior
 	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
 	brick_position.Y = 0;
 	brick_position.Z = GetActorLocation().Z + (distace_spawn_z * count_z);
+	////////////////////////////////////////////////////
+
+
+	check_X_counter = count_x;
+	check_Z_counter = count_z;
+	check_offset_X = offset_x;
+	check_offset_Z = offset_z;
+
+	if (offset_z == offset_x)//solo si son iguales paso al proximo offset x
+	{
+		offset_x += 1;
+		count_x = offset_x;
+		count_z = 0;
+	}
+	else//mantiene en offset x hasta que termine la diagonal
+	{
+		if (count_z != offset_x)
+		{
+			count_z += 1;
+			count_x -= 1;
+		}
+		else
+		{
+		
+			count_z = 0;
+			count_x = offset_x;//vuelvo al offset
+			offset_z = offset_x;
+		}
+	}
+
+
+	//if (count_z == 0)
+	//{
+	//	count_x = offset_x;
+	//}
+	//if (count_x > count_z)//I stay at the index of "x" until I reach the same amount in "z"
+	//{
+	//	count_z = count_x;
+	//	count_x -= 1;
+	//}
+	//else
+	//{
+	//	offset_x += 1;//sum in x
+	//}
+
 	
-	count_x += 1;
-	count_z += 1;
 
 
 	//if (offset_x < count_z)//if there are more in X than quantity X
