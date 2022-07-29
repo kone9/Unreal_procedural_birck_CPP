@@ -28,7 +28,10 @@ AGeneracion_ladrillos::AGeneracion_ladrillos()
 	can_spawn = false;
 	check_offset_X = 0;
 	check_offset_Z = 0;
-
+	final_offset_x = 0;
+	final_offset_z= 0;
+	check_final_offset_X = 4;
+	check_final_offset_Z = 0;
 }
 
 // Called when the game starts or when spawned
@@ -173,11 +176,11 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	//if (GEngine)
 //	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("instance brick"));
 
-	if (offset_x == amount_x -1 && offset_z == amount_z -1)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
-		return false;
-	}
+	//if (offset_x == amount_x -1 && offset_z == amount_z -1)
+	//{
+	//	GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+	//	return false;
+	//}
 
 	//tener en cuenta que esto representa el resultado anterior
 	brick_position.X = GetActorLocation().X + (distace_spawn_x * count_x);
@@ -190,28 +193,57 @@ bool AGeneracion_ladrillos::diagonal_new_position_to_end(FVector& brick_position
 	check_Z_counter = count_z;
 	check_offset_X = offset_x;
 	check_offset_Z = offset_z;
+	check_final_offset_X = final_offset_x;
+	check_final_offset_Z = final_offset_z;
 
-	if (offset_z == offset_x)//solo si son iguales paso al proximo offset x
+	//if (offset_x == amount_x - 1 && offset_z == amount_z - 1)//cuando termina la diagonal
+	//{
+	//	
+	//}
+	if (count_x == amount_x - 1  && count_z == amount_z )//termino de instanciar 
 	{
-		offset_x += 1;
-		count_x = offset_x;
-		count_z = 0;
+		GetWorld()->GetTimerManager().ClearTimer(timer_spawn_handler);//stop timer
+		return false;
 	}
-	else//mantiene en offset x hasta que termine la diagonal
+
+	else//sino comienzo a instanciar
 	{
-		if (count_z != offset_x)
+		if (offset_z == offset_x)//solo si son iguales paso al proximo offset X
 		{
-			count_z += 1;
-			count_x -= 1;
+			if (offset_x < amount_x -1)//sino llego al final de X sumo una posición en X
+			{
+				offset_x += 1;
+				count_x = offset_x;
+				count_z = 0;
+			}
+			else
+			{
+				count_x = amount_x - 1;
+				count_z += 1;
+
+				offset_x = count_x;
+				offset_z = count_z;
+			}
 		}
-		else
+		else//mantiene en offset x hasta que termine la diagonal
 		{
-		
-			count_z = 0;
-			count_x = offset_x;//vuelvo al offset
-			offset_z = offset_x;
+			if (count_z != offset_x)//voy intercalando posiciones
+			{
+				count_z += 1;//sumo en z
+				count_x -= 1;//resto en X
+				
+				const int int_to_print = count_z;
+				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("int: %i"), int_to_print));
+			}
+			else //si la diagonal termino
+			{
+				count_z = count_x;//z tendria que volver a la posición en y
+				count_x = offset_x;//vuelvo al offset
+				offset_z = offset_x;//offset vuelve a posicion x
+			}
 		}
 	}
+	
 
 
 	//if (count_z == 0)

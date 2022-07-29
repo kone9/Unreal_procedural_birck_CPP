@@ -64,6 +64,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int check_offset_Z;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int check_final_offset_X;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int check_final_offset_Z;
+
 private:
 	void spawn_brick(TSubclassOf<AActor> brick, FVector positionBrick);
 	
@@ -79,14 +84,15 @@ private:
 
 	int offset_x;
 	int offset_z;
+
+	int final_offset_x;
+	int final_offset_z;
+
 	bool can_spawn;
 
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
-
 
 };
